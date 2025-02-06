@@ -14,7 +14,10 @@ impl Solution {
                         *count += 1;
 
                         if *count > 1 {
-                            *target_map.entry(product).or_insert(1) += 1;
+                            target_map
+                                .entry(product)
+                                .and_modify(|count| *count += 1)
+                                .or_insert(2);
                         }
                     })
                     .or_insert(1);
