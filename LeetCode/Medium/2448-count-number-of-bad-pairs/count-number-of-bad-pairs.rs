@@ -9,7 +9,7 @@ impl Solution {
             let key = index as i32 - *value;
             *frequency.entry(key).or_insert(0) += 1;
         }
-        println!("{:?}", frequency);
+
         for value in frequency.values() {
             if *value > 1 {
                 answer -= (*value * (*value - 1) / 2) as i64;
