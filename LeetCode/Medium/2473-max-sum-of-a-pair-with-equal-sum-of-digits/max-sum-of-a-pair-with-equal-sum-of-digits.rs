@@ -1,10 +1,8 @@
-use std::cmp;
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, BinaryHeap};
 
 impl Solution {
     pub fn maximum_sum(nums: Vec<i32>) -> i32 {
-        let mut freq: HashMap<usize, Vec<usize>> = HashMap::new();
-        let mut max: i32 = -1;
+        let mut freq: HashMap<usize, (usize, BinaryHeap<i32>)> = HashMap::new();
 
         for num in nums {
             let mut rem: usize = (num % 10) as usize;
@@ -18,15 +16,25 @@ impl Solution {
             }
 
             freq.entry(sum)
-                .and_modify(|vec| {
-                    vec[0] += 1;
-                    let local_max: usize = vec.iter().skip(1).map(|v| *v + num as usize).max().unwrap();
-                    max = cmp::max(max, local_max as i32);
-                    vec.push(num as usize);
+                .and_modify(|(f, heap)| {
+                    *f += 1;
+                    heap.push(num);
                 })
-                .or_insert(vec![1, num as usize]);
+                .or_insert((1, BinaryHeap::from(vec![num])));
         }
 
-        max
+        freq.values_mut()
+            .filter_map(|(f, heap)| {
+                if *f > 1 {
+                    let first = heap.pop()?;
+                    let second = heap.pop()?;
+                    Some(first + second)
+                } else {
+                    None
+                }
+            })
+            .max()
+            .unwrap_or(-1)
     }
+
 }
